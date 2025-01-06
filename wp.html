@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Push Notification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 16px;
+            background-color: #4CAF50; /* Green color */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Send Push Notification</h1>
+    <p>Click the button below to request permission and send a notification.</p>
+    <button onclick="sendPushNotification()">Send Push Notification</button>
+
+    <script>
+        // Check if browser supports notifications
+        if ('Notification' in window && navigator.serviceWorker) {
+            console.log("Browser supports Push Notifications");
+        } else {
+            alert('Your browser does not support push notifications.');
+        }
+
+        // Function to request permission and send a notification
+        function sendPushNotification() {
+            // Request notification permission
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    // Create a simple notification
+                    new Notification('WhatsApp Notification', {
+                        body: 'This is a push notification to inform you about WhatsApp updates!',
+                        icon: 'https://upload.wikimedia.org/wikipedia/commons/6/60/WhatsApp.svg',
+                        tag: 'whatsapp-notification',
+                    });
+                    console.log('Notification sent!');
+                } else {
+                    alert('Permission denied for push notifications.');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

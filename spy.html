@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listening to the Environment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        #startBtn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        #startBtn:hover {
+            background-color: #45a049;
+        }
+
+        #status {
+            margin-top: 20px;
+        }
+
+        #locationLink {
+            margin-top: 20px;
+            display: inline-block;
+            font-size: 16px;
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        #locationLink:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Place your phone on the table and connect your AirPods</h1>
+        <button id="startBtn">Start Listening</button>
+        <p id="status">Waiting for user to start...</p>
+        <audio id="audioPlayer" controls></audio>
+        <p id="location"></p> <!-- Display latitude and longitude here -->
+        <a id="locationLink" target="_blank">View on Google Maps</a> <!-- Link to Google Maps -->
+    </div>
+
+    <script>
+        const startBtn = document.getElementById('startBtn');
+        const statusElement = document.getElementById('status');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const locationElement = document.getElementById('location');
+        const locationLink = document.getElementById('locationLink');
+
+        // Function to get the user's exact location (latitude and longitude)
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    locationElement.textContent = `Your exact location: Latitude ${latitude}, Longitude ${longitude}`;
+
+                    // Generate the Google Maps link using latitude and longitude
+                    const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+                    locationLink.setAttribute('href', googleMapsLink);
+                    locationLink.textContent = `View this location on Google Maps`;
+                }, error => {
+                    console.log('Error fetching location:', error);
+                    locationElement.textContent = 'Unable to get your location.';
+                    locationLink.textContent = ''; // Hide the link if there's an error
+                });
+            } else {
+                locationElement.textContent = 'Geolocation is not supported by this browser.';
+                locationLink.textContent = ''; // Hide the link if geolocation is not supported
+            }
+        }
+
+        // Call location function to display the exact location when the page loads
+        getLocation();
+
+        startBtn.addEventListener('click', () => {
+            // Check if the browser supports microphone access
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then((stream) => {
+                        statusElement.textContent = 'Listening...';
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        const analyser = audioContext.createAnalyser();
+                        const source = audioContext.createMediaStreamSource(stream);
+                        source.connect(analyser);
+                        const audioData = new Uint8Array(analyser.frequencyBinCount);
+
+                        // Visualize sound or process audio data here if needed
+                        // For now, let's just keep playing the incoming sound
+                        audioPlayer.srcObject = stream;
+                        audioPlayer.play();
+                    })
+                    .catch((err) => {
+                        console.log('Error accessing the microphone: ', err);
+                        statusElement.textContent = 'Microphone access denied or not available.';
+                    });
+            } else {
+                statusElement.textContent = 'Your browser does not support audio recording.';
+            }
+        });
+    </script>
+</body>
+</html>
