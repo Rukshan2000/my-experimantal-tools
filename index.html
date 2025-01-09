@@ -1,32 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index Page</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Delta Meet</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
-<body class="bg-gray-100 font-sans">
 
-    <div class="container mx-auto p-4">
-        <header class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-blue-600">My Experimental Tools</h1>
-        </header>
-
-        <nav class="bg-white shadow-md rounded-lg p-4">
-            <ul class="space-y-4 text-center">
-                <li>
-                    <a href="spy.html" class="text-blue-500 hover:text-blue-700 text-lg font-medium">Spy Page</a>
-                </li>
-                <li>
-                    <a href="whatsapp.html" class="text-blue-500 hover:text-blue-700 text-lg font-medium">WhatsApp spam</a>
-                </li>
-                <li>
-                    <a href="access.html" class="text-blue-500 hover:text-blue-700 text-lg font-medium">Access</a>
-                </li>
-            </ul>
-        </nav>
+<body>
+    <h1 class="title">Delta Meet</h1>
+    <p id="notification" hidden></p>
+    <div class="entry-modal" id="entry-modal">
+        <p>Create or Join Meeting</p>
+        <input id="room-input" class="room-input" placeholder="Enter Room ID">
+        <div>
+            <button onclick="createRoom()">Create Room</button>
+            <button onclick="joinRoom()">Join Room</button>
+        </div>
     </div>
+    <div class="meet-area">
+        <!-- Remote Video Element-->
+        <video id="remote-video"></video>
 
+        <!-- Local Video Element-->
+        <video id="local-video"></video>
+        <div class="meet-controls-bar">
+            <button onclick="startScreenShare()">Screen Share</button>
+        </div>
+    </div>
 </body>
+
+<script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
+<script src="script.js"></script>
+
 </html>
