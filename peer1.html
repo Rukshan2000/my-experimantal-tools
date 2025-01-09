@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Delta Meet</title>
+</head>
+<body>
+    <h1 class="title">Delta Meet</h1>
+    <p id="notification" hidden></p>
+
+    <div class="entry-modal" id="entry-modal">
+        <p>Create or Join Meeting</p>
+        <input id="room-input" class="room-input" placeholder="Enter Room ID">
+        <div>
+            <button onclick="createRoom()">Create Room</button>
+            <button onclick="joinRoom()">Join Room</button>
+        </div>
+    </div>
+
+    <div class="meet-area">
+        <video id="remote-video"></video>
+        <video id="local-video"></video>
+
+        <div id="join-link-container" hidden>
+            <p>Share this link to join the room:</p>
+            <input type="text" id="join-link" readonly>
+            <button onclick="copyJoinLink()">Copy Link</button>
+        </div>
+
+        <div class="meet-controls-bar">
+            <button onclick="toggleMic()">
+                <i id="mic-icon" class="fas fa-microphone"></i> 
+            </button>
+            <button onclick="toggleVideo()">
+                <i id="video-icon" class="fas fa-video"></i> 
+            </button>
+            <button onclick="startScreenShare()">Screen Share</button>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
+    <script src="remort.js"></script>
+    <script>
+        var local_stream;
+
+        // Your existing script for peer connection, getUserMedia, etc.
+        let isMicOn = true;
+        let isVideoOn = true;
+
+        function toggleMic() {
+            isMicOn = !isMicOn;
+            local_stream.getAudioTracks()[0].enabled = isMicOn;
+            document.getElementById("mic-icon").className = isMicOn ? "fas fa-microphone" : "fas fa-microphone-slash";
+        }
+
+        function toggleVideo() {
+            isVideoOn = !isVideoOn;
+            local_stream.getVideoTracks()[0].enabled = isVideoOn;
+            document.getElementById("video-icon").className = isVideoOn ? "fas fa-video" : "fas fa-video-slash";
+        }
+    </script>
+</body>
+</html>

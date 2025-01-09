@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+        }
+        #entry-modal {
+            display: block;
+            margin-top: 20px;
+        }
+        #room-input {
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 16px;
+            width: 200px;
+        }
+        .btn {
+            padding: 10px 20px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .btn:disabled {
+            background-color: #ccc;
+        }
+        #local-video, #remote-video {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            margin-top: 20px;
+        }
+        #notification {
+            background-color: #ff9800;
+            color: white;
+            padding: 10px;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Online Meeting</h1>
+    
+    <div id="entry-modal">
+        <input type="text" id="room-input" placeholder="Enter Room Name">
+        <button class="btn" id="create-btn" onclick="createRoom()">Create Room</button>
+        <button class="btn" id="join-btn" onclick="joinRoom()">Join Room</button>
+    </div>
+
+    <div id="meeting-controls" hidden>
+        <button class="btn" id="mic-btn" onclick="toggleMic()">Mic On</button>
+        <button class="btn" id="video-btn" onclick="toggleVideo()">Video On</button>
+        <button class="btn" onclick="startScreenShare()">Share Screen</button>
+        <button class="btn" onclick="stopScreenSharing()">Stop Screen Share</button>
+    </div>
+
+    <div id="local-video-container" hidden>
+        <video id="local-video" autoplay muted></video>
+    </div>
+
+    <div id="remote-video-container" hidden>
+        <video id="remote-video" autoplay></video>
+    </div>
+
+    <div id="notification"></div>
+</div>
+
+<script src="https://cdn.peerjs.com/1.0.1/peerjs.min.js"></script>
+<script src="remort.js"></script>
+</script>
+
+</body>
+</html>

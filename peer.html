@@ -1,0 +1,181 @@
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Delta Meet</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        .title {
+            top: 0;
+            width: 100%;
+            z-index: 1;
+            position: absolute;
+            background-color: #1d1d1d;
+            color: #fff;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 24px;
+        }
+
+        .entry-modal {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            padding: 20px;
+            background-color: #fff;
+            color: #333;
+            text-align: center;
+            margin: auto;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+        }
+
+        .entry-modal p {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        #room-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #007bff;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #remote-video {
+            height: 100%;
+            width: 100%;
+            background-color: lightgray;
+            position: absolute;
+            object-fit: cover;
+        }
+
+        #local-video {
+            width: 300px;
+            height: 150px;
+            right: 20px;
+            bottom: 100px;
+            z-index: 1;
+            background-color: #1d1d1d;
+            position: absolute;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+
+        .meet-controls-bar {
+            background-color: rgba(0, 0, 0, 0.7);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .meet-controls-bar button {
+            background-color: #28a745;
+            margin: 0 5px;
+        }
+
+        #notification {
+            position: absolute;
+            z-index: 1;
+            text-align: center;
+            color: white;
+            margin: 0;
+            top: 50px;
+            font-size: 18px;
+            width: 100%;
+            background-color: #ffc107;
+            padding: 10px 0;
+        }
+
+        @media (max-width: 768px) {
+            .entry-modal {
+                width: 90%;
+                padding: 15px;
+            }
+
+            #local-video {
+                width: 150px;
+                height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title">Delta Meet</h1>
+    <p id="notification" hidden></p>
+
+    <div class="entry-modal" id="entry-modal">
+        <p>Create or Join Meeting</p>
+        <input id="room-input" class="room-input" placeholder="Enter Room ID">
+        <div>
+            <button onclick="createRoom()">Create Room</button>
+            <button onclick="joinRoom()">Join Room</button>
+        </div>
+    </div>
+
+    <div class="meet-area">
+        <video id="remote-video"></video>
+        <video id="local-video"></video>
+
+        <div class="meet-controls-bar">
+            <button onclick="toggleMic()">
+                <i id="mic-icon" class="fas fa-microphone"></i> Mic
+            </button>
+            <button onclick="toggleVideo()">
+                <i id="video-icon" class="fas fa-video"></i> Video
+            </button>
+            <button onclick="startScreenShare()">Screen Share</button>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
+    <script src="remort.js"></script>
+    <script>
+        var local_stream;
+
+        // Your existing script for peer connection, getUserMedia, etc.
+        let isMicOn = true;
+        let isVideoOn = true;
+
+        function toggleMic() {
+            isMicOn = !isMicOn;
+            local_stream.getAudioTracks()[0].enabled = isMicOn;
+            document.getElementById("mic-icon").className = isMicOn ? "fas fa-microphone" : "fas fa-microphone-slash";
+        }
+
+        function toggleVideo() {
+            isVideoOn = !isVideoOn;
+            local_stream.getVideoTracks()[0].enabled = isVideoOn;
+            document.getElementById("video-icon").className = isVideoOn ? "fas fa-video" : "fas fa-video-slash";
+        }
+    </script>
+</body>
+</html>

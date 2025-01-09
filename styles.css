@@ -1,82 +1,180 @@
-body{
+/* General Styles */
+body {
     margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Roboto', sans-serif;
+    background-color: #2c3e50; /* Darker, more modern background */
+    color: #ecf0f1; /* Lighter text color for better contrast */
+    line-height: 1.6;
 }
 
-.title{
+/* Title */
+.title {
+    position: absolute;
     top: 0;
     width: 100%;
-    max-width: 100%;
+    background-color: #34495e; /* Modern dark shade */
+    color: #ecf0f1;
+    text-align: center;
+    padding: 16px 0;
+    font-size: 28px;
     z-index: 1;
-    display: block;
-  
-    position: absolute;
-    background-color: #444444;
-    color: white;
-   margin: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
 }
 
-.entry-modal{
-    border: 1px solid #444444;
-    width: 300px;
+/* Modal for Room Creation/Joining */
+.entry-modal {
+    width: 380px;
+    padding: 20px;
+    background-color: #fff;
+    color: #333;
+    border-radius: 12px;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2); /* Deeper shadow for modern feel */
+    text-align: center;
     margin: auto;
-    z-index: 9999;
     position: absolute;
     left: 50%;
-    top: 70;
-    margin-left: -150px;
-    padding: 5px;
-    color: #fff;
-    background-color: #444444;
-    text-align: center;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    transition: all 0.3s ease-in-out; /* Smooth transition for modal */
 }
 
-#notification{
-    position: absolute;
-    z-index: 1;
-    text-align: center;
-    color: #fff;
-    margin: 0;
-    top: 47.33px;
-    font-size: 18pt;
+.entry-modal p {
+    font-size: 22px;
+    font-weight: 600; /* Slightly bolder text */
+    margin-bottom: 20px;
+    color: #34495e; /* Darker text for better readability */
+}
+
+#room-input {
     width: 100%;
-    background-color: orange;
+    padding: 14px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    background-color: #f5f6f7; /* Lighter background for input */
+    transition: border-color 0.3s ease;
 }
 
-
-.room-input{
-  border: none;
-  padding:5px;
+#room-input:focus {
+    border-color: #007bff; /* Blue border on focus */
+    outline: none;
 }
 
-button{
-    margin: 3px;
-    padding: 5px;
+/* Button Styling */
+button {
+    background-color: #007bff; /* Modern blue color */
+    border: none;
+    color: #fff;
+    padding: 14px 24px;
+    margin: 10px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smoother hover effects */
 }
 
-#remote-video{
-    top: 0;
+button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px); /* Slight lift effect on hover */
+}
+
+/* Video Display */
+#remote-video {
+    width: 100%;
     height: 100%;
-    width: 100%;
-    left: 0;
-    background-color: lightgray;
+    background-color: #333;
     position: absolute;
+    object-fit: cover;
+    border-radius: 10px; /* Subtle rounded corners */
 }
 
-#local-video{
-    top: 60;
-    width: 300;
+#local-video {
+    width: 280px;
+    height: 160px;
+    position: absolute;
+    right: 20px;
+    bottom: 80px;
+    border-radius: 12px;
+    border: 3px solid #ecf0f1; /* Lighter border for better contrast */
     object-fit: cover;
-    height: 150;
-    z-index: 1;
-    right: 15;
-    background-color: #444444;
-    position: absolute;
+    z-index: 2;
 }
-.meet-controls-bar{
-    bottom: 0;
-    background-color: black;
-    left: 0;
+
+/* Control Bar */
+.meet-controls-bar {
+    background-color: rgba(0, 0, 0, 0.7);
     position: absolute;
+    bottom: 0;
     width: 100%;
+    padding: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.meet-controls-bar button {
+    background-color: #28a745;
+    padding: 14px;
+    margin: 0 18px;
+    border-radius: 8px;
+    font-size: 18px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.meet-controls-bar button:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+}
+
+/* Notification Bar */
+#notification {
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+    top: 50px;
+    text-align: center;
+    background-color: #f39c12; /* Slightly muted yellow */
+    padding: 14px 0;
+    font-size: 18px;
+    color: #2c3e50; /* Darker text for readability */
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+#join-link-container {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#join-link {
+    width: 80%;
+    margin-bottom: 10px;
+    padding: 5px;
+    text-align: center;
+}
+
+
+/* Responsiveness */
+@media (max-width: 768px) {
+    .entry-modal {
+        width: 85%;
+        padding: 18px;
+    }
+
+    #local-video {
+        width: 220px;
+        height: 130px;
+    }
+
+    .meet-controls-bar button {
+        padding: 12px;
+        font-size: 14px;
+    }
 }
