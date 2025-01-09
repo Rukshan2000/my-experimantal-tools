@@ -12,16 +12,23 @@
 
   <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
   <script>
-    const peer = new Peer(); // Create Peer object for client
-    let conn, screenStream;
+    let clientIdCounter = 0; // Start ID counter at 0
+
+    function generateSimpleId() {
+      clientIdCounter += 1;
+      return clientIdCounter;
+    }
 
     const clientIdDisplay = document.getElementById('client-id-display');
     const statusDisplay = document.getElementById('status-display');
 
-    // Display Client Peer ID for reference
-    peer.on('open', (id) => {
-      clientIdDisplay.innerText = `Client Peer ID: ${id}`;
-    });
+    const simpleId = generateSimpleId(); // Generate a simple ID for the client
+    clientIdDisplay.innerText = `Client ID: ${simpleId}`; // Display the simple ID
+
+    // Create Peer object with the simple ID
+    const peer = new Peer(simpleId.toString());
+
+    let conn, screenStream;
 
     // Function to share screen
     async function shareScreen() {
