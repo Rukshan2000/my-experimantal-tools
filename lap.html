@@ -3,20 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phone Media Sharing</title>
+  <title>Laptop Media Display</title>
   <style>
     body { font-family: Arial, sans-serif; text-align: center; }
-    input { margin: 20px; }
-    button { padding: 10px 20px; font-size: 16px; }
+    #mediaDisplay { display: flex; flex-wrap: wrap; justify-content: center; }
+    img, video, audio { margin: 20px; max-width: 400px; max-height: 300px; }
   </style>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 </head>
 <body>
-  <h1>Select Media to Share</h1>
-  <input type="file" id="mediaInput" accept="image/*,video/*,audio/*" multiple>
-  <br>
-  <button onclick="sendMedia()">Send Media</button>
+  <h1>Received Media</h1>
+  <div id="mediaDisplay"></div>
 
   <script>
     // Firebase Configuration
@@ -35,8 +33,6 @@
     const db = firebase.firestore();
 
     let peerConnection;
-    let dataChannel;
-
     const peerConnectionConfig = {
       iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
     };
@@ -47,8 +43,11 @@
       const data = snapshot.data();
       if (!peerConnection) return;
 
-      if (data.answer && !peerConnection.remoteDescription) {
-        await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+      if (data.offer && !peerConnection.remoteDescription) {
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+        await signalingDoc.set({ answer });
       }
 
       if (data.candidate) {
@@ -56,34 +55,46 @@
       }
     });
 
-    async function createOffer() {
+    async function createAnswer() {
       peerConnection = new RTCPeerConnection(peerConnectionConfig);
-      dataChannel = peerConnection.createDataChannel('mediaChannel');
+      peerConnection.ondatachannel = event => {
+        const receiveChannel = event.channel;
+        receiveChannel.onmessage = handleReceivedMedia;
+      };
 
       peerConnection.onicecandidate = event => {
         if (event.candidate) {
           signalingDoc.set({ candidate: event.candidate }, { merge: true });
         }
       };
-
-      const offer = await peerConnection.createOffer();
-      await peerConnection.setLocalDescription(offer);
-      await signalingDoc.set({ offer });
     }
 
-    function sendMedia() {
-      const files = document.getElementById('mediaInput').files;
-      for (let file of files) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          dataChannel.send(reader.result);
-        };
-        reader.readAsArrayBuffer(file); // Read the file as an ArrayBuffer
+    function handleReceivedMedia(event) {
+      const receivedData = event.data;
+      const blob = new Blob([receivedData]);
+      const mediaDisplay = document.getElementById('mediaDisplay');
+
+      const fileType = blob.type.split('/')[0];
+
+      if (fileType === 'image') {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(blob);
+        mediaDisplay.appendChild(img);
+      } else if (fileType === 'video') {
+        const video = document.createElement('video');
+        video.src = URL.createObjectURL(blob);
+        video.controls = true;
+        mediaDisplay.appendChild(video);
+      } else if (fileType === 'audio') {
+        const audio = document.createElement('audio');
+        audio.src = URL.createObjectURL(blob);
+        audio.controls = true;
+        mediaDisplay.appendChild(audio);
       }
     }
 
-    // Automatically create an offer to initiate the WebRTC connection
-    createOffer();
+    // Automatically create an answer to respond to WebRTC connection
+    createAnswer();
   </script>
 </body>
 </html>
