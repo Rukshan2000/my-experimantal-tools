@@ -12,24 +12,22 @@
   <button id="connect-btn">Connect to Client</button>
   <br><br>
 
-  <button id="start-btn">Start</button>
-  <button id="stop-btn">Stop</button>
-
+  <video id="screen-video" autoplay playsinline style="width: 80%; border: 1px solid #000;"></video>
   <p id="status">Status: Not connected</p>
 
   <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
   <script>
-    const peer = new Peer(); // Create a new Peer object
+    const peer = new Peer(); // Create Peer object for admin
     let conn;
 
-    // Get the necessary DOM elements
     const connectBtn = document.getElementById('connect-btn');
     const clientIdInput = document.getElementById('client-id');
     const statusEl = document.getElementById('status');
+    const videoElement = document.getElementById('screen-video');
 
     connectBtn.addEventListener('click', () => {
       const clientId = clientIdInput.value;
-      conn = peer.connect(clientId); // Connect to the client using its ID
+      conn = peer.connect(clientId); // Connect to client using their ID
 
       conn.on('open', () => {
         statusEl.innerText = 'Status: Connected to client';
@@ -39,24 +37,39 @@
         console.error('Connection error:', err);
         statusEl.innerText = 'Status: Connection failed';
       });
+
+      // Call the client to receive their screen stream
+      peer.on('call', (call) => {
+        call.answer(); // Answer the call
+
+        call.on('stream', (stream) => {
+          // Show the client's screen in the video element
+          videoElement.srcObject = stream;
+        });
+      });
     });
 
-    // Send commands (start/stop) to the client
-    document.getElementById('start-btn').addEventListener('click', () => {
+    // Listen for mouse events on the video element
+    videoElement.addEventListener('mousemove', (e) => {
       if (conn && conn.open) {
-        conn.send('start'); // Send 'start' command to client
+        const mouseData = {
+          type: 'mouse',
+          x: e.clientX,
+          y: e.clientY,
+        };
+        conn.send(mouseData); // Send mouse position to client
       }
     });
 
-    document.getElementById('stop-btn').addEventListener('click', () => {
+    // Listen for keyboard events on the document
+    document.addEventListener('keydown', (e) => {
       if (conn && conn.open) {
-        conn.send('stop'); // Send 'stop' command to client
+        const keyData = {
+          type: 'keyboard',
+          key: e.key,
+        };
+        conn.send(keyData); // Send keyboard input to client
       }
-    });
-
-    // Display the Peer ID for reference
-    peer.on('open', (id) => {
-      console.log('Admin Peer ID:', id);
     });
   </script>
 </body>

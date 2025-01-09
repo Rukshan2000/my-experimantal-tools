@@ -8,43 +8,57 @@
 <body>
   <h2>Client Device</h2>
   <p id="client-id-display">Waiting for connection...</p>
-  <p id="action-display">No action yet</p>
+  <p id="status-display">No actions yet</p>
 
   <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
   <script>
-    const peer = new Peer(); // Create a new Peer object
+    const peer = new Peer(); // Create Peer object for client
+    let conn, screenStream;
 
-    // Get the necessary DOM elements
     const clientIdDisplay = document.getElementById('client-id-display');
-    const actionDisplay = document.getElementById('action-display');
+    const statusDisplay = document.getElementById('status-display');
 
-    // Display the client's Peer ID so admin can use it
+    // Display Client Peer ID for reference
     peer.on('open', (id) => {
       clientIdDisplay.innerText = `Client Peer ID: ${id}`;
     });
 
-    // Wait for a connection from the admin
-    peer.on('connection', (conn) => {
-      conn.on('data', (data) => {
-        if (data === 'start') {
-          actionDisplay.innerText = 'Action: Start';
-          // Execute start action
-          console.log('Start action triggered');
-        } else if (data === 'stop') {
-          actionDisplay.innerText = 'Action: Stop';
-          // Execute stop action
-          console.log('Stop action triggered');
+    // Function to share screen
+    async function shareScreen() {
+      try {
+        screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+        return screenStream;
+      } catch (error) {
+        console.error("Screen sharing error:", error);
+        return null;
+      }
+    }
+
+    // Wait for admin connection and share screen
+    peer.on('connection', (connection) => {
+      conn = connection;
+
+      conn.on('open', async () => {
+        const stream = await shareScreen();
+        if (stream) {
+          const call = peer.call(conn.peer, stream); // Call admin with screen stream
+          statusDisplay.innerText = 'Status: Sharing screen with admin';
         }
       });
 
-      conn.on('close', () => {
-        actionDisplay.innerText = 'Connection closed';
+      conn.on('data', (data) => {
+        if (data.type === 'mouse') {
+          // Execute mouse control (example: move cursor)
+          console.log('Mouse event received:', data);
+        } else if (data.type === 'keyboard') {
+          // Execute keyboard control
+          console.log('Keyboard event received:', data);
+        }
       });
+    });
 
-      conn.on('error', (err) => {
-        console.error('Connection error:', err);
-        actionDisplay.innerText = 'Error occurred';
-      });
+    peer.on('call', (call) => {
+      call.answer(); // Answer incoming call, though client won't receive video
     });
   </script>
 </body>
