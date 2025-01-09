@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Media Files</title>
+</head>
+<body>
+    <h1>Select and Display Media Files</h1>
+
+    <!-- File Input to Select Media Files -->
+    <input type="file" id="fileInput" accept="image/*,audio/*,video/*" multiple>
+
+    <!-- Media display area -->
+    <div id="mediaDisplay"></div>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const files = event.target.files; // Get the selected files
+            const mediaDisplay = document.getElementById('mediaDisplay');
+            mediaDisplay.innerHTML = ''; // Clear previous content
+
+            // Loop through the selected files
+            for (let file of files) {
+                const fileType = file.type.split('/')[0]; // Get file type (image, video, audio)
+                const reader = new FileReader();
+
+                // Define what to do once the file is loaded
+                reader.onload = function(e) {
+                    const mediaElement = document.createElement(fileType === 'image' ? 'img' : fileType);
+                    mediaElement.src = e.target.result;
+
+                    // Set display properties
+                    if (fileType === 'image') {
+                        mediaElement.style.width = '200px'; // Set image width
+                    } else if (fileType === 'audio' || fileType === 'video') {
+                        mediaElement.controls = true; // Add controls for audio/video
+                        mediaElement.style.width = '300px'; // Set video/audio width
+                    }
+
+                    mediaDisplay.appendChild(mediaElement);
+                };
+
+                reader.readAsDataURL(file); // Read the file as a data URL
+            }
+        });
+    </script>
+</body>
+</html>
