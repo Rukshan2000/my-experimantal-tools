@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Control</title>
+</head>
+<body>
+  <h2>Admin Control Panel</h2>
+  <label for="client-id">Enter Client ID: </label>
+  <input type="text" id="client-id" placeholder="Client ID">
+  <button id="connect-btn">Connect to Client</button>
+  <br><br>
+
+  <button id="start-btn">Start</button>
+  <button id="stop-btn">Stop</button>
+
+  <p id="status">Status: Not connected</p>
+
+  <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
+  <script>
+    const peer = new Peer(); // Create a new Peer object
+    let conn;
+
+    // Get the necessary DOM elements
+    const connectBtn = document.getElementById('connect-btn');
+    const clientIdInput = document.getElementById('client-id');
+    const statusEl = document.getElementById('status');
+
+    connectBtn.addEventListener('click', () => {
+      const clientId = clientIdInput.value;
+      conn = peer.connect(clientId); // Connect to the client using its ID
+
+      conn.on('open', () => {
+        statusEl.innerText = 'Status: Connected to client';
+      });
+
+      conn.on('error', (err) => {
+        console.error('Connection error:', err);
+        statusEl.innerText = 'Status: Connection failed';
+      });
+    });
+
+    // Send commands (start/stop) to the client
+    document.getElementById('start-btn').addEventListener('click', () => {
+      if (conn && conn.open) {
+        conn.send('start'); // Send 'start' command to client
+      }
+    });
+
+    document.getElementById('stop-btn').addEventListener('click', () => {
+      if (conn && conn.open) {
+        conn.send('stop'); // Send 'stop' command to client
+      }
+    });
+
+    // Display the Peer ID for reference
+    peer.on('open', (id) => {
+      console.log('Admin Peer ID:', id);
+    });
+  </script>
+</body>
+</html>

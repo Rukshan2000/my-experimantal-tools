@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Device</title>
+</head>
+<body>
+  <h2>Client Device</h2>
+  <p id="client-id-display">Waiting for connection...</p>
+  <p id="action-display">No action yet</p>
+
+  <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
+  <script>
+    const peer = new Peer(); // Create a new Peer object
+
+    // Get the necessary DOM elements
+    const clientIdDisplay = document.getElementById('client-id-display');
+    const actionDisplay = document.getElementById('action-display');
+
+    // Display the client's Peer ID so admin can use it
+    peer.on('open', (id) => {
+      clientIdDisplay.innerText = `Client Peer ID: ${id}`;
+    });
+
+    // Wait for a connection from the admin
+    peer.on('connection', (conn) => {
+      conn.on('data', (data) => {
+        if (data === 'start') {
+          actionDisplay.innerText = 'Action: Start';
+          // Execute start action
+          console.log('Start action triggered');
+        } else if (data === 'stop') {
+          actionDisplay.innerText = 'Action: Stop';
+          // Execute stop action
+          console.log('Stop action triggered');
+        }
+      });
+
+      conn.on('close', () => {
+        actionDisplay.innerText = 'Connection closed';
+      });
+
+      conn.on('error', (err) => {
+        console.error('Connection error:', err);
+        actionDisplay.innerText = 'Error occurred';
+      });
+    });
+  </script>
+</body>
+</html>
