@@ -1,13 +1,118 @@
 <html>
 
 <head>
-    <title>Delta Meet</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <title>Delta Meet - Remote Control</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .title {
+            top: 0;
+            width: 100%;
+            max-width: 100%;
+            z-index: 1;
+            display: block;
+            position: absolute;
+            background-color: #444444;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .entry-modal {
+            border: 1px solid #444444;
+            width: 300px;
+            margin: auto;
+            z-index: 9999;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px;
+            color: #fff;
+            background-color: #444444;
+            text-align: center;
+        }
+
+        #notification {
+            position: absolute;
+            z-index: 1;
+            text-align: center;
+            color: #fff;
+            margin: 0;
+            top: 47.33px;
+            font-size: 18pt;
+            width: 100%;
+            background-color: orange;
+        }
+
+        .room-input {
+            border: none;
+            padding: 10px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 10px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #e64a19;
+        }
+
+        #remote-video {
+            top: 0;
+            height: 100%;
+            width: 100%;
+            left: 0;
+            background-color: lightgray;
+            position: absolute;
+            object-fit: cover;
+        }
+
+        #local-video {
+            bottom: 20px;
+            width: 150px;
+            height: 100px;
+            z-index: 2;
+            right: 20px;
+            object-fit: cover;
+            border: 2px solid white;
+            position: absolute;
+            background-color: #444444;
+        }
+
+        .meet-controls-bar {
+            bottom: 0;
+            background-color: black;
+            left: 0;
+            position: absolute;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .meet-controls-bar button {
+            margin: 0 10px;
+        }
+    </style>
 </head>
 
 <body>
-    <h1 class="title">Delta Meet</h1>
+    <h1 class="title">Delta Meet - Remote Control</h1>
     <p id="notification" hidden></p>
+
     <div class="entry-modal" id="entry-modal">
         <p>Create or Join Meeting</p>
         <input id="room-input" class="room-input" placeholder="Enter Room ID">
@@ -16,19 +121,22 @@
             <button onclick="joinRoom()">Join Room</button>
         </div>
     </div>
+
     <div class="meet-area">
         <!-- Remote Video Element-->
-        <video id="remote-video"></video>
+        <video id="remote-video" autoplay playsinline></video>
 
         <!-- Local Video Element-->
-        <video id="local-video"></video>
+        <video id="local-video" autoplay playsinline muted></video>
+
         <div class="meet-controls-bar">
-            <button onclick="startScreenShare()">Screen Share</button>
+            <button onclick="startScreenShare()">Start Screen Share</button>
+            <button onclick="stopScreenSharing()">Stop Screen Share</button>
         </div>
     </div>
 </body>
 
 <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
-<script src="script.js"></script>
+<script src="remort.js"></script>
 
 </html>
