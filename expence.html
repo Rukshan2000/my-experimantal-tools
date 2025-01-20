@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Tracker</title>
+  <script type="module">
+    // Firebase imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";  // Import Firebase Database
+  </script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/11.1.0/firebase.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans flex">
+
+  <!-- Side Navigation -->
+  <div class="w-64 bg-blue-600 text-white h-screen p-4">
+    <h2 class="text-xl font-bold mb-6">Expense Tracker</h2>
+    <ul>
+      <li class="mb-4">
+        <a href="#" class="text-white hover:text-blue-300">Dashboard</a>
+      </li>
+      <li class="mb-4">
+        <a href="#" class="text-white hover:text-blue-300">Add Expense</a>
+      </li>
+      <li class="mb-4">
+        <a href="#" class="text-white hover:text-blue-300">View Expenses</a>
+      </li>
+      <li class="mb-4">
+        <button id="logoutBtn" class="bg-red-500 w-full py-2 rounded-md">Logout</button>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 p-6">
+    <!-- Add Expense Section -->
+    <div id="expensesSection">
+      <h2 class="text-xl font-semibold mb-4">Add Expense</h2>
+      <input type="text" id="itemName" placeholder="Item Name" class="border p-2 w-full mb-4 rounded-md">
+      <input type="number" id="amount" placeholder="Amount" class="border p-2 w-full mb-4 rounded-md">
+      <button id="addExpenseBtn" class="w-full bg-green-600 text-white py-2 rounded-md">Add Expense</button>
+
+      <h2 class="text-xl font-semibold mt-8 mb-4">Expenses</h2>
+      <ul id="expenseList" class="space-y-4">
+        <!-- List of expenses will appear here -->
+      </ul>
+    </div>
+  </div>
+
+  <script type="module">
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyA111LxhBRkSM0XCqHCeBGU86oqhb9OcCs",
+      authDomain: "expense-tracker-69d12.firebaseapp.com",
+      projectId: "expense-tracker-69d12",
+      storageBucket: "expense-tracker-69d12.firebasestorage.app",
+      messagingSenderId: "309628943594",
+      appId: "1:309628943594:web:39eb8b8a038873b5b1eb93",
+      measurementId: "G-PNGKN2M2YN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);  // Initialize Firebase Database
+
+    // DOM elements
+    const logoutBtn = document.getElementById('logoutBtn');
+    const itemNameInput = document.getElementById('itemName');
+    const amountInput = document.getElementById('amount');
+    const expenseList = document.getElementById('expenseList');
+    const addExpenseBtn = document.getElementById('addExpenseBtn');
+
+    // Add expense (Save to Firebase Realtime Database)
+    addExpenseBtn.addEventListener('click', () => {
+      const itemName = itemNameInput.value;
+      const amount = amountInput.value;
+      const date = new Date().toISOString().split('T')[0]; // Current date in YYYY-MM-DD format
+
+      if (itemName && amount) {
+        // Get a reference to the database where you want to store the expense
+        const expenseRef = ref(database, 'expenses/' + Date.now()); // Use timestamp as unique ID
+
+        // Save the expense data to Firebase
+        set(expenseRef, {
+          itemName: itemName,
+          amount: amount,
+          date: date
+        }).then(() => {
+          console.log('Expense added successfully');
+          itemNameInput.value = '';
+          amountInput.value = '';
+          loadExpenses(); // Reload the expense list
+        }).catch((error) => {
+          console.error('Error adding expense:', error);
+        });
+      } else {
+        console.log('Please fill in both fields');
+      }
+    });
+
+    // Load expenses from Firebase and display in the list
+    function loadExpenses() {
+      const expensesRef = ref(database, 'expenses');
+      onValue(expensesRef, (snapshot) => {
+        const expenses = snapshot.val();
+        expenseList.innerHTML = '';
+        for (let id in expenses) {
+          const expense = expenses[id];
+          const listItem = document.createElement('li');
+          listItem.classList.add('bg-white', 'p-4', 'rounded-md', 'shadow-md');
+          listItem.innerHTML = `<strong>${expense.itemName}</strong> - $${expense.amount} <br><small class="text-gray-500">${expense.date}</small>`;
+          expenseList.appendChild(listItem);
+        }
+      });
+    }
+
+    // Initial loading of expenses
+    loadExpenses();
+
+    // Logout functionality
+    logoutBtn.addEventListener('click', () => {
+      console.log('User logged out');
+      // Handle logout logic (e.g., clear authentication state)
+    });
+  </script>
+</body>
+</html>

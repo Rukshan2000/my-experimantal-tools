@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One Letter Shift Encrypter & Decrypter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>One Letter Shift Encrypter & Decrypter</h1>
+        <textarea id="inputText" rows="4" placeholder="Enter your text"></textarea>
+        <button onclick="encrypt()">Encrypt</button>
+        <button onclick="decrypt()">Decrypt</button>
+        <h3>Result:</h3>
+        <textarea id="resultText" rows="4" readonly></textarea>
+    </div>
+
+    <script>
+        function shiftLetter(char, shift) {
+            const isUpperCase = (char >= 'A' && char <= 'Z');
+            const isLowerCase = (char >= 'a' && char <= 'z');
+            
+            if (isUpperCase || isLowerCase) {
+                let charCode = char.charCodeAt(0);
+                let base = isUpperCase ? 65 : 97;
+                return String.fromCharCode(((charCode - base + shift + 26) % 26) + base);
+            }
+            return char; // Non-alphabet characters remain unchanged
+        }
+
+        function encrypt() {
+            const text = document.getElementById("inputText").value;
+            let encryptedText = "";
+            for (let i = 0; i < text.length; i++) {
+                encryptedText += shiftLetter(text[i], 1); // Shift by 1 to encrypt
+            }
+            document.getElementById("resultText").value = encryptedText;
+        }
+
+        function decrypt() {
+            const text = document.getElementById("inputText").value;
+            let decryptedText = "";
+            for (let i = 0; i < text.length; i++) {
+                decryptedText += shiftLetter(text[i], -1); // Shift by -1 to decrypt
+            }
+            document.getElementById("resultText").value = decryptedText;
+        }
+    </script>
+</body>
+</html>
